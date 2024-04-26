@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aplikasi Cuaca</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inconsolata&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="title">
+        <h1>Aplikasi Cuaca</h1>
+      </div>
+      <div class="form">
+        <p class="sub-title">Cek cuaca kota anda</p>
+        <input type="text" name="city" id="btn-input" placeholder="Nama kota" />
+        <input
+          type="submit"
+          value="Search"
+          class="btn-search"
+          id="btn-search"
+        />
+      </div>
+      <div class="content" id="content"></div>
+
+      <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"
+      ></script>
+      <script>
+        $("#btn-search").on("click", function () {
+          $.ajax({
+            url: "https://api.openweathermap.org/data/2.5/weather?",
+            type: "get",
+            dataType: "json",
+            data: {
+              appId: "",
+              q: $("#btn-input").val(),
+              units: "metric",
+            },
+            success: function (result) {
+              var content = document.getElementById("content");
+
+              // Menghapus elemen dengan class "weather" jika ada
+              $(".weather").remove();
+              $(".error").remove();
+              // Data cuaca yang diterima
+              const name = result.name;
+              const icon = `https://openweathermap.org/img/wn/${result.weather[0].icon}@2x.png`;
+              const temp = Math.floor(result.main.temp);
+              const weatherTemp = result.weather[0].main;
+              const feelsLike = result.main.feels_like;
+              const windSpeed = result.wind.speed;
+              const humidity = result.main.humidity;
+              const visibility = result.visibility / 1000;
+              const pressure = result.main.pressure;
+
+              // Menambahkan elemen baru dengan data cuaca
+              $(".content").append(
+                `<div class="weather"><p>Current weather: <span style="color: #22668D;">` +
+                  name +
+                  `</span></p>
+                <div class="icon">
+                    <div class="temp-icon">
+                        <img src="` +
+                  icon +
+                  `" alt="weather" >
+                        <p style="font-size: 48px; color: #22668D; align-self: center;">` +
+                  temp +
+                  `&deg;C</p>
+                    </div>
+                    <div class="weather-main" style="font-weight: 700;">
+                        <p>` +
+                  weatherTemp +
+                  `</p>
+                        <p>Feels like <span style="color: #22668D;">` +
+                  feelsLike +
+                  `&deg;C</span></p>
+                    </div>
+                </div>     
+                <div class="weather-desc">
+                    <div class="wind">
+                        <img src="img/wind.png" alt="windspeed" width="50">
+                        <p class="desc-title">Wind</p>
+                        <p class="desc-data">` +
+                  windSpeed +
+                  `m/s</p>
+                    </div>
+                    <div class="humidity">
+                        <img src="img/humidity.png" alt="windspeed" width="50">
+                        <p class="desc-title">Humidity</p>
+                        <p class="desc-data">` +
+                  humidity +
+                  `%</p>
+                    </div>
+                    <div class="visibility">
+                        <img src="img/visibility.png" alt="windspeed" width="50">
+                        <p class="desc-title">Visibility</p>
+                        <p class="desc-data">` +
+                  visibility +
+                  `km</p>
+                    </div>
+                    <div class="pressure">
+                        <img src="img/pressure.png" alt="windspeed" width="50">
+                        <p class="desc-title">Pressure</p>
+                        <p class="desc-data">` +
+                  pressure +
+                  `hPa</p>
+                    </div>
+                </div></div>`
+              );
+            },
+            error: function (xhr, status, error) {
+              $(".weather").remove();
+              $(".error").remove();
+              $(".content")
+                .append(`<div class=error><p class="error-msg">Kota tidak ditemukan</p>
+                </div>`);
+            },
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>
